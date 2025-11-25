@@ -173,89 +173,85 @@ El modelo entrenado sirve como demostración técnica del proceso de Machine Lea
 
 ## 12. Modelo Random Forest
 
-Además de la regresión lineal, se entrenó un modelo **Random Forest Regressor** con el objetivo de mejorar la capacidad predictiva utilizando un algoritmo más robusto y no lineal. Este tipo de modelo puede capturar relaciones más complejas entre las características de audio y la popularidad, algo que la regresión lineal no logra.
+Para mejorar el rendimiento respecto al modelo de Regresión Lineal, se entrenó un modelo **RandomForestRegressor**, que permite capturar relaciones no lineales y manejar mejor interacciones entre variables.
 
-### Configuración del modelo
-
-Se utilizó la siguiente configuración:
+Hiperparámetros utilizados:
 
 - n_estimators = 200  
-- random_state = 42  
-- n_jobs = -1 (uso de todos los núcleos disponibles)  
 - max_depth = None  
 - min_samples_leaf = 1  
+- n_jobs = -1  
+- random_state = 42  
 
-El modelo se entrenó con:
+El modelo se entrenó con las mismas variables predictoras utilizadas en el modelo lineal.
 
-```python
-rf = RandomForestRegressor(
-    n_estimators=200,
-    random_state=42,
-    n_jobs=-1,
-    max_depth=None,
-    min_samples_leaf=1
-)
+---
 
-rf.fit(X_train, y_train)
-13. Resultados del modelo Random Forest
+## 13. Resultados del Random Forest
 
 Las métricas obtenidas fueron:
 
-MAE: 10.59
+- MAE: 10.59  
+- RMSE: 14.98  
+- R²: 0.5513  
 
-RMSE: 14.98
+Interpretación:
 
-R²: 0.5513
+- El **MAE se redujo de ~18.4 a ~10.6**, una mejora significativa.
+- El **RMSE disminuyó de 22.1 a 15.0**, indicando menor error.
+- El **R² aumentó de 0.02 a 0.55**, lo que significa que el modelo explica aproximadamente el **55% de la variabilidad de la popularidad**.
 
-Interpretación de resultados
+El cambio indica una mejora sustancial:  
+Random Forest captura patrones que el modelo lineal es incapaz de detectar.
 
-El MAE disminuyó de 18.47 (Regresión Lineal) a 10.59.
+---
 
-El R² aumentó de 0.0228 a 0.5513, mostrando un incremento significativo en la capacidad predictiva.
+## 14. Importancia de las características según Random Forest
 
-El Random Forest explica aproximadamente el 55% de la variación de la popularidad, un resultado muy superior al modelo lineal.
+El Random Forest permite evaluar la importancia relativa de cada variable en la predicción de la popularidad:
 
-Esto confirma que existen relaciones no lineales entre las características de audio y la popularidad, mejor capturadas por modelos basados en árboles.
+| Feature            | Importance |
+|-------------------|------------|
+| acousticness      | 0.1119     |
+| duration_ms       | 0.1079     |
+| danceability      | 0.1066     |
+| tempo             | 0.1066     |
+| valence           | 0.1046     |
+| speechiness       | 0.1028     |
+| loudness          | 0.0995     |
+| energy            | 0.0953     |
+| liveness          | 0.0912     |
+| instrumentalness  | 0.0738     |
 
-14. Importancia de variables
+Interpretación:
 
-El modelo Random Forest permitió obtener la importancia relativa de cada feature:
+- La popularidad depende de una combinación de factores, sin un único predictor dominante.
+- Características como **acousticness, duración, danceability, tempo y valence** son las más relevantes.
+- A diferencia del modelo lineal, el Random Forest **capta efectos no lineales** entre variables musicales.
 
-Feature	Importancia
-acousticness	0.1119
-duration_ms	0.1079
-danceability	0.1066
-tempo	0.1066
-valence	0.1046
-speechiness	0.1028
-loudness	0.0995
-energy	0.0953
-liveness	0.0912
-instrumentalness	0.0738
-Interpretación
+---
 
-Las variables con mayor importancia fueron: acousticness, duration_ms, danceability y tempo.
+## 15. Gráfica de Importancia de Características
 
-A diferencia de la regresión lineal, el modelo Random Forest muestra una relevancia más equilibrada entre las características.
+Se generó una figura que visualiza de forma ordenada las importancias del modelo Random Forest. Esta gráfica ayuda a identificar, de manera intuitiva, qué variables fueron más relevantes.
 
-La información de audio sí contribuye al modelo, pero de manera compleja y no lineal.
+El archivo fue guardado en:
 
-15. Gráfica de importancia de variables
+images/importancia_random_forest.png
 
-Se generó también una gráfica que muestra visualmente la importancia de cada variable dentro del Random Forest.
+La gráfica muestra claramente que:
+- acousticness, duration_ms, danceability y tempo son las características de mayor peso,
+- instrumentalness y liveness tienen menor relevancia.
 
-Esta gráfica se encuentra en:
+---
 
-/images/random_forest_feature_importance.png
+## 16. Conclusión general del proyecto
 
-16. Conclusión del modelo Random Forest
+Este proyecto demuestra que:
 
-El modelo Random Forest ofrece una mejora significativa respecto a la regresión lineal, mostrando que:
+- **La Regresión Lineal no es adecuada** para este problema (R² ≈ 0.02).
+- **Random Forest mejora dramáticamente** el rendimiento (R² ≈ 0.55).
+- La popularidad de una canción no depende de una sola característica, sino de una **combinación compleja de atributos musicales**.
+- Aun así, el modelo tiene límites debido a la ausencia de factores externos (playlisting, artista, marketing, viralidad, etc.).
 
-La relación entre características de audio y popularidad no es lineal.
-
-Un modelo más complejo puede capturar mejor los patrones del dataset.
-
-El rendimiento obtenido (R² = 0.55) es aceptable considerando la naturaleza de los datos y sus limitaciones.
-
-Aun así, la popularidad sigue estando influenciada por factores externos que este dataset no incluye.
+Este pipeline constituye una base sólida para futuras mejoras, como probar modelos más avanzados, tuning de hiperparámetros, o añadir variables externas.
